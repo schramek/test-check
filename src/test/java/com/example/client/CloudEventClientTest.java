@@ -39,7 +39,7 @@ class CloudEventClientTest {
                 .andExpect(header("ce-specversion", "1.0"))
                 .andExpect(header("ce-time", not(emptyOrNullString())))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("{\"id\": 123, \"name\": \"hello\"}"))
+                .andExpect(content().json("{\"id\":123,\"name\":\"hello\"}"))
                 .andRespond(withSuccess());
 
         // when & then

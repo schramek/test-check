@@ -58,6 +58,6 @@ class CloudEventClientIntegrationTest {
                 .withHeader("ce-specversion", equalTo("1.0"))
                 .withHeader("ce-time", matching(".*"))
                 .withHeader("Content-Type", containing("application/json"))
-                .withRequestBody(equalToJson("{\"id\": 123, \"name\": \"hello\"}")));
+                .withRequestBody(equalToJson("{\"id\":123,\"name\":\"hello\"}")));
     }
 }

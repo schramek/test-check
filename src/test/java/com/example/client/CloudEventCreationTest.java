@@ -2,6 +2,7 @@ package com.example.client;
 
 import io.cloudevents.CloudEvent;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -11,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CloudEventCreationTest {
 
-    private final CloudEventClient client = new CloudEventClient(null);
+    private final CloudEventClient client = new CloudEventClient(null, JsonMapper.builder().build());
 
-    private final byte[] payload = "{\"id\": 123, \"name\": \"hello\"}".getBytes(StandardCharsets.UTF_8);
+    private final byte[] payload = "{\"id\":123,\"name\":\"hello\"}".getBytes(StandardCharsets.UTF_8);
 
     @Test
     void givenPayload_whenCreateCloudEvent_thenIdIs4000() {
@@ -100,6 +101,6 @@ class CloudEventCreationTest {
         // then
         assertNotNull(event.getData());
         String data = new String(event.getData().toBytes(), StandardCharsets.UTF_8);
-        assertEquals("{\"id\": 123, \"name\": \"hello\"}", data);
+        assertEquals("{\"id\":123,\"name\":\"hello\"}", data);
     }
 }
