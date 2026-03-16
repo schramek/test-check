@@ -23,16 +23,7 @@ public class CloudEventClient {
 
     public void sendCloudEvent() {
         byte[] payload = "{\"id\": 123, \"name\": \"hello\"}".getBytes(StandardCharsets.UTF_8);
-
-        CloudEvent event = CloudEventBuilder.v1()
-                .withId("4000")
-                .withType("com.example.sending")
-                .withSource(URI.create("/cloud-event-client"))
-                .withTime(OffsetDateTime.now())
-                .withDataContentType("application/json")
-                .withData("application/json", payload)
-                .build();
-
+        CloudEvent event = createCloudEvent(payload);
         HttpHeaders ceHeaders = CloudEventHttpUtils.toHttp(event);
 
         restClient.post()
@@ -41,5 +32,16 @@ public class CloudEventClient {
                 .body(payload)
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    CloudEvent createCloudEvent(byte[] payload) {
+        return CloudEventBuilder.v1()
+                .withId("4000")
+                .withType("com.example.sending")
+                .withSource(URI.create("/cloud-event-client"))
+                .withTime(OffsetDateTime.now())
+                .withDataContentType("application/json")
+                .withData("application/json", payload)
+                .build();
     }
 }
