@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -29,7 +29,8 @@ class CloudEventClientTest {
     private MockRestServiceServer mockServer;
 
     @Test
-    void sendCloudEvent_returnsOk_succeeds() {
+    void givenServerReturns200_whenSendCloudEvent_thenRequestContainsCorrectHeadersAndBody() {
+        // given
         mockServer.expect(requestTo("http://localhost:3000/api"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header("ce-id", "4000"))
@@ -41,54 +42,65 @@ class CloudEventClientTest {
                 .andExpect(content().json("{\"id\": 123, \"name\": \"hello\"}"))
                 .andRespond(withSuccess());
 
+        // when & then
         assertDoesNotThrow(() -> cloudEventClient.sendCloudEvent());
         mockServer.verify();
     }
 
     @Test
-    void sendCloudEvent_returns201_succeeds() {
+    void givenServerReturns201_whenSendCloudEvent_thenNoExceptionIsThrown() {
+        // given
         mockServer.expect(requestTo("http://localhost:3000/api"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withCreatedEntity(null));
 
+        // when & then
         assertDoesNotThrow(() -> cloudEventClient.sendCloudEvent());
         mockServer.verify();
     }
 
     @Test
-    void sendCloudEvent_returns202_succeeds() {
+    void givenServerReturns202_whenSendCloudEvent_thenNoExceptionIsThrown() {
+        // given
         mockServer.expect(requestTo("http://localhost:3000/api"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withAccepted());
 
+        // when & then
         assertDoesNotThrow(() -> cloudEventClient.sendCloudEvent());
         mockServer.verify();
     }
 
     @Test
-    void sendCloudEvent_returns400_throwsApiClientException() {
+    void givenServerReturns400_whenSendCloudEvent_thenThrowsApiClientException() {
+        // given
         mockServer.expect(requestTo("http://localhost:3000/api"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest().body("Bad Request"));
 
+        // when
         ApiClientException exception = assertThrows(
                 ApiClientException.class,
                 () -> cloudEventClient.sendCloudEvent());
 
+        // then
         assertEquals(400, exception.getStatusCode().value());
         assertEquals("Bad Request", exception.getResponseBody());
     }
 
     @Test
-    void sendCloudEvent_returns500_throwsApiClientException() {
+    void givenServerReturns500_whenSendCloudEvent_thenThrowsApiClientException() {
+        // given
         mockServer.expect(requestTo("http://localhost:3000/api"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withServerError().body("Internal Server Error"));
 
+        // when
         ApiClientException exception = assertThrows(
                 ApiClientException.class,
                 () -> cloudEventClient.sendCloudEvent());
 
+        // then
         assertEquals(500, exception.getStatusCode().value());
         assertEquals("Internal Server Error", exception.getResponseBody());
     }

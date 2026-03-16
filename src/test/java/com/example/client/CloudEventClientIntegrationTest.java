@@ -24,26 +24,33 @@ class CloudEventClientIntegrationTest {
     private CloudEventClient cloudEventClient;
 
     @Test
-    void sendCloudEvent_success() {
+    void givenServerIsAvailable_whenSendCloudEvent_thenRequestSucceeds() {
+        // given
         wireMock.stubFor(post(anyUrl()).willReturn(ok()));
 
+        // when & then
         assertDoesNotThrow(() -> cloudEventClient.sendCloudEvent());
     }
 
     @Test
-    void sendCloudEvent_serverError_throwsApiClientException() {
+    void givenServerReturns500_whenSendCloudEvent_thenThrowsApiClientException() {
+        // given
         wireMock.stubFor(post(anyUrl())
                 .willReturn(serverError().withBody("Internal Server Error")));
 
+        // when & then
         assertThrows(ApiClientException.class, () -> cloudEventClient.sendCloudEvent());
     }
 
     @Test
-    void sendCloudEvent_sendsCorrectCloudEventHeaders() {
+    void givenServerIsAvailable_whenSendCloudEvent_thenRequestContainsCloudEventHeaders() {
+        // given
         wireMock.stubFor(post(anyUrl()).willReturn(ok()));
 
+        // when
         cloudEventClient.sendCloudEvent();
 
+        // then
         wireMock.verify(postRequestedFor(anyUrl())
                 .withHeader("ce-id", equalTo("4000"))
                 .withHeader("ce-type", equalTo("com.example.sending"))

@@ -16,55 +16,88 @@ class CloudEventCreationTest {
     private final byte[] payload = "{\"id\": 123, \"name\": \"hello\"}".getBytes(StandardCharsets.UTF_8);
 
     @Test
-    void createCloudEvent_setsIdCorrectly() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenIdIs4000() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertEquals("4000", event.getId());
     }
 
     @Test
-    void createCloudEvent_setsTypeCorrectly() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenTypeIsComExampleSending() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertEquals("com.example.sending", event.getType());
     }
 
     @Test
-    void createCloudEvent_setsSourceCorrectly() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenSourceIsCloudEventClient() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertEquals(URI.create("/cloud-event-client"), event.getSource());
     }
 
     @Test
-    void createCloudEvent_setsSpecVersion() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenSpecVersionIs1() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertEquals("1.0", event.getSpecVersion().toString());
     }
 
     @Test
-    void createCloudEvent_setsTimeToNow() {
+    void givenPayload_whenCreateCloudEvent_thenTimeIsNow() {
+        // given
         OffsetDateTime before = OffsetDateTime.now().minusSeconds(1);
 
+        // when
         CloudEvent event = client.createCloudEvent(payload);
 
+        // then
         assertNotNull(event.getTime());
         assertTrue(event.getTime().isAfter(before));
         assertTrue(event.getTime().isBefore(OffsetDateTime.now().plusSeconds(1)));
     }
 
     @Test
-    void createCloudEvent_setsDataContentType() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenDataContentTypeIsJson() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertEquals("application/json", event.getDataContentType());
     }
 
     @Test
-    void createCloudEvent_setsPayloadData() {
-        CloudEvent event = client.createCloudEvent(payload);
+    void givenPayload_whenCreateCloudEvent_thenDataMatchesPayload() {
+        // given
+        byte[] givenPayload = payload;
 
+        // when
+        CloudEvent event = client.createCloudEvent(givenPayload);
+
+        // then
         assertNotNull(event.getData());
         String data = new String(event.getData().toBytes(), StandardCharsets.UTF_8);
         assertEquals("{\"id\": 123, \"name\": \"hello\"}", data);
